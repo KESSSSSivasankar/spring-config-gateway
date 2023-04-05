@@ -1,0 +1,40 @@
+server:
+  port: 7047
+  
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7046/eureka/
+  instance:
+    appname: apigateway
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+        minimum-number-of-calls: 1
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s    
+    
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: adminmodule
+        uri: "http://localhost:7010/busroutes"
+        predicates:
+        - "Path=/busroutes/**"
+      - id: bookingmodule
+        uri: "http://localhost:7040/booking"
+        predicates:
+        - "Path=/booking/**"
+      - id: inventorymodule
+        uri: "http://localhost:7020/inventory"
+        predicates:
+        - "Path=/inventory/**"
+      - id: adminmodule
+        uri: "http://localhost:7030/payment"
+        predicates:
+        - "Path=/payment/**"
